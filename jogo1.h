@@ -1,15 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
-<<<<<<< Updated upstream
-=======
+#include <time.h>
+#include "header.h"
+//<<<<<<< Updated upstream
+//=======
 
-int main(int argc, char *argv[])
+void Jogo()
 {
-	int randNum;
-	int num;
-	int resposta = 1;
-
-	do{
+    time_t start = time(NULL);
+    int pont=0;
+    int randNum;
+    int num;
+    int resposta = 1;
+    time_t diff;
+    do{
         srand (time(NULL));
         printf("Adivinha um numero de 1 a 5! - ");
         scanf("%d",&num);
@@ -19,11 +23,14 @@ int main(int argc, char *argv[])
         if(num != randNum){
             printf("Erraste! O numero certo era o %d\n",randNum);
             resposta = -1;
-        }else
+        }else{
             printf("Acertaste! Numero dado: %d , Numero gerado: %d\n", num,randNum);
+            pont++;
+        }
+        diff = time(NULL)-start;
+        printf("Tempo: %d\n", diff);
 
-	}while (resposta == 1);
+    }while ( diff < tempo_campeonato);
 
-    return 0;
 }
->>>>>>> Stashed changes
+//>>>>>>> Stashed changes
