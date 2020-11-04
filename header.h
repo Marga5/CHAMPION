@@ -1,19 +1,20 @@
+int tempo_campeonato;
+int tempo_espera;
 
-struct Jogador;
-struct Jogo;
-struct Campeonato;
-
-typedef Campeonatos{
+typedef struct Campeonatos { 
 	int id;
-}Campeonato;
+        int MAXPLAYERS;
+}campeonato;
 
-typedef Jogos{
+typedef struct Jogos {
 	int id;
-	
-}Jogo;
+        char nomeJogo[50];
+}jogo;
 
-typedef Jogadores{
+typedef struct Jogadores {
 	int id;
-	int username;
+	char username[50];
 	int pontuacao;
-}Jogador;
+}jogador;
+
+void Jogo();
