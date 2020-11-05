@@ -1,20 +1,26 @@
+ #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <time.h>
+
 int tempo_campeonato;
 int tempo_espera;
+int MAXPLAYERS;
 
-typedef struct Campeonatos { 
-	int id;
-        int MAXPLAYERS;
-}campeonato;
+typedef struct  { 
+	int pidC;      
+}Campeonatos;
 
-typedef struct Jogos {
-	int id;
+typedef struct {
+	int pidJ;
         char nomeJogo[50];
-}jogo;
+}Jogos;
 
-typedef struct Jogadores {
-	int id;
+typedef struct {
+	int pidP;
 	char username[50];
 	int pontuacao;
-}jogador;
+}Jogadores;
 
 void Jogo();
+
