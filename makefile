@@ -13,4 +13,4 @@ jogo1:
 	gcc jogo1.c -o jogo1
 
 clean:
-	rm *.0
+	rm -rf arbitro cliente jogo1 header
