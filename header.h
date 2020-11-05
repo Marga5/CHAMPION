@@ -14,6 +14,9 @@ typedef struct  {
 typedef struct {
 	int pidJ;
         char nomeJogo[50];
+	char gameDir[100];
+	int maxplayers;
+        
 }Jogos;
 
 typedef struct {
@@ -21,6 +24,8 @@ typedef struct {
 	char username[50];
 	int pontuacao;
 }Jogadores;
+
+Jogos jogo;
 
 void Jogo();
 

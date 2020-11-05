@@ -1,4 +1,25 @@
 #include "header.h"
+#include <string.h>
+
+void inicializaVariaveis(){
+
+    char * directory;
+    char * Mplayers;
+
+    directory = getenv("GAMEDIR");
+    if(directory != NULL)
+        strcpy(jogo.gameDir, directory);
+    Mplayers = getenv("MAXPLAYERS");
+    if(Mplayers != NULL)
+        jogo.maxplayers = atoi(Mplayers);
+
+
+    if(jogo.maxplayers <= 0 || jogo.maxplayers >= 30){
+        jogo.maxplayers = 20;
+    }
+
+}
+
 
 void main(int argc, char *argv[]) {
    int option;
