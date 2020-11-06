@@ -13,5 +13,5 @@ jogo1:
 	gcc jogo1.c arbitro.c -o jogo1
 
 
-clear:
+clean:
 	rm -rf arbitro cliente jogo1 header 

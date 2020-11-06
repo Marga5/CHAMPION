@@ -1,6 +1,10 @@
 #include "header.h"
 #include <string.h>
 
+
+//Leitura de Variaveis de ambiente
+//export MAXPLAYER="..."
+//export GAMEDIR="..."
 void inicializaVariaveis(){
 
     char * directory;
@@ -9,44 +13,51 @@ void inicializaVariaveis(){
     directory = getenv("GAMEDIR");
     if(directory != NULL)
         strcpy(jogo.gameDir, directory);
-    Mplayers = getenv("MAXPLAYERS");
+    Mplayers = getenv("MAXPLAYER");
     if(Mplayers != NULL)
-        jogo.maxplayers = atoi(Mplayers);
+        campeonato.maxplayers = atoi(Mplayers);
 
 
-    if(jogo.maxplayers <= 0 || jogo.maxplayers >= 30){
-        jogo.maxplayers = 20;
+    if(campeonato.maxplayers <= 0 || campeonato.maxplayers >= 30){
+        campeonato.maxplayers = 20;
     }
+
+    printf("Directoria: %s\n", jogo.gameDir);
+    printf("MaxPlayers: %d\n", campeonato.maxplayers);
+    
 
 }
 
 
 void main(int argc, char *argv[]) {
    int option;
-   // put ':' at the starting of the string so compiler can distinguish between '?' and ':'
-   while((option = getopt(argc, argv, ":if:t:d:")) != -1){ //get option from the getopt() method
+   
+   inicializaVariaveis();
+   
+   //leitura dos argumentos passados por linha de comandos
+   while((option = getopt(argc, argv, ":if:t:d:")) != -1){ 
       switch(option){  
          case 't':
              tempo_espera = atoi(optarg);
-            printf("Tempo de Espera definido para: %d\n", tempo_espera);
-            
+            printf("Tempo de Espera definido para: %d\n", tempo_espera);           
             break;
-         case 'd': //here f is used for some file name
             
+         case 'd':           
             tempo_campeonato = atoi(optarg);
             printf("Duracao do campeonato definido para: %d\n", tempo_campeonato);
             break;
+            
           case ':':
             printf("Opcao precisa de um valor\n");
             break;
 
-         case '?': //used for some unknown options
-            printf("unknown option: %c\n", optopt);
+         case '?': //usado para opçoes desconhecidas
+            printf("Opcao desconhecida: %c\n", optopt);
             break;
       }
    }
-   for(; optind < argc; optind++){ //when some extra arguments are passed
-      printf("Given extra arguments: %s\n", argv[optind]);
+   for(; optind < argc; optind++){ //Quando sao passados argumentos extra
+      printf("Argumentos Extra: %s\n", argv[optind]);
    }
    
    printf("SERVIDOR LANCADO!!!\n");

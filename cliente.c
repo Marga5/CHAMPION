@@ -3,9 +3,10 @@
 
 #include "header.h"
 
-void main() {
-	//printf("Insira o Username: ");
-	//scanf("%s", Jogador.nome);
+void main() {   
+    char username[25];
+        printf("Insira o Username: ");
+	scanf("%s", username);
 
-	//printf("Nome: ", Jogador.nome);
+	printf("[%s|%d]] Eu sou o Cliente!\n", username, getpid());
 }
