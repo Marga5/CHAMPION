@@ -1,38 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <time.h>
-#include <stdbool.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 int tempo_campeonato;
 int tempo_espera;
 
-typedef struct  { 
-	int pidC;           //ID do campeonato
-        int maxplayers;     //maximo de jogadores no campeonato
-}Campeonatos;
+#define FIFO_CLI "cli"
+#define FIFO_SRV "serv"
 
-
-typedef struct {
-	int pidJ;           //ID do Jogo
-        char nomeJogo[50];  //Nome do jogo
-	char gameDir[100];  //Directorio do jogo
-        
-}Jogos;
-
-typedef struct {
-	int pidP;           //Id do jogador
-	char username[50];  //Nome do Jogador
-	int pontuacao;      //pontuação do jogador obtida no ultimo torneio
-        int inGame;         //variavel de controlo [0 - não está em nenhum jogo | 1 - já tem jogo atribuido]
-}Jogadores;
-
-
-Jogos jogo;
-Jogadores jogador;
-Campeonatos campeonato;
-
-
+typedef struct{
+    char ordem[20];
+    char resposta[20];
+    int pid;
+}PEDIDO;
 
 void Jogo();
-
