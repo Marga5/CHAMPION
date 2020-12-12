@@ -6,6 +6,7 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <time.h>
 
 int tempo_campeonato;
 int tempo_espera;
@@ -19,4 +20,5 @@ typedef struct{
     int pid;
 }PEDIDO;
 
-void Jogo();
+void Jogo1();
+void Jogo2();
