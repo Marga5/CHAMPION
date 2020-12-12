@@ -4,7 +4,7 @@ void main(){
     int num1, num2, resultado, resposta, pontuacao=0;
     time_t diff;
     time_t start = time(NULL);
-    int tempo_campeonato = 20;
+
     printf("\n-------------------------------------\n");
     printf(" JOGO DE ACERTAR A CONTA! ");
     printf("\n-------------------------------------\n\n");
