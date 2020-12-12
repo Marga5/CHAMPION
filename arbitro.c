@@ -6,6 +6,53 @@
 //Leitura de Variaveis de ambiente
 //export MAXPLAYER="..."
 //export GAMEDIR="..."
+
+void leComandosCliente(){
+
+  PEDIDO p;
+  int fd,fdr, bytes;
+  char fifo[40];
+
+  fd = open(FIFO_SRV, O_RDWR); // -1 = ERRO
+  printf("Abri o FIFO\n");
+
+  do {
+       bytes = read(fd, &p, sizeof(PEDIDO));
+       if(strcmp(p.ordem,"#game") == 0){
+         printf("Recebi comando -> %s : cliente -> %d [%d bytes]", p.ordem,p.pid, bytes);
+         strcpy(p.resposta, "Comando enviado com sucesso");
+       
+         sprintf(fifo, FIFO_CLI, p.pid);
+         fdr = open(FIFO_CLI, O_WRONLY);
+         bytes = write(fdr, &p, sizeof(PEDIDO));
+         close(fdr);
+         printf("Enviei... %s [%d bytes]\n", p.resposta, bytes);
+         // print da informação do jogo atribuido
+         
+       }else if(strcmp(p.ordem,"#quit") == 0){
+         printf("Recebi comando -> %s : cliente -> %d [%d bytes]", p.ordem,p.pid, bytes);
+         strcpy(p.resposta, "Comando enviado com sucesso");
+       
+         sprintf(fifo, FIFO_CLI, p.pid);
+         fdr = open(FIFO_CLI, O_WRONLY);
+         bytes = write(fdr, &p, sizeof(PEDIDO));
+         close(fdr);
+         printf("Enviei... %s [%d bytes]\n", p.resposta, bytes);
+         // sai do jogo , possivelmente dando unlink do fifo ao qual está conectado
+       }
+       else{
+         printf("Recebi -> %s : cliente -> %d [%d bytes]", p.ordem,p.pid, bytes);
+         strcpy(p.resposta, "Comando desconhecido");
+       
+         sprintf(fifo, FIFO_CLI, p.pid);
+         fdr = open(FIFO_CLI, O_WRONLY);
+         bytes = write(fdr, &p, sizeof(PEDIDO));
+         close(fdr);
+         printf("Enviei... %s [%d bytes]\n", p.resposta, bytes);
+         }      
+  
+  }while(1);
+}
 void inicializaVariaveis(){
 
     char * directory;
@@ -85,23 +132,10 @@ void main(int argc, char *argv[]) {
    }
    
    
-   
-   fd = open(FIFO_SRV, O_RDWR); // -1 = ERRO
-   printf("Abri o FIFO\n");
+   leComandosCliente();
    
    do{
-       //bytes = read(fd, &p, sizeof(PEDIDO));
-       //printf("Recebi -> %s : cliente -> %d [%d bytes]", p.ordem,p.pid, bytes);
-       //strcpy(p.resposta, "confirmado");
-       
-       //sprintf(fifo, FIFO_CLI, p.pid);
-       //fdr = open(FIFO_CLI, O_WRONLY);
-       //bytes = write(fdr, &p, sizeof(PEDIDO));
-       //close(fdr);
-       //printf("Enviei... %s [%d bytes]\n", p.resposta, bytes);
-       
-       
-       printf("\nComando: ");
+   	printf("\nComando: ");
 
        scanf("%s",&strtmp);
 
@@ -126,8 +160,7 @@ void main(int argc, char *argv[]) {
         else if (strcmp(strtmp,"exit") == 0){
         	encerra();
         }
-               
-       
+        
    }while(1);
    
    close(fd);
