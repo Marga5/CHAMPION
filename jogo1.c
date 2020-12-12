@@ -7,7 +7,7 @@
 #include "header.h"
 
 
-void Jogo()
+void Jogo1()
 {
     time_t start = time(NULL);
     int pont=0;
@@ -17,8 +17,10 @@ void Jogo()
     time_t diff;
     printf("\n-------------------------------------\n");
     printf(" JOGO DE ADIVINHAR O NUMERO! ");
-       printf("\n-------------------------------------\n\n");
+    printf("\n-------------------------------------\n\n");
     
+    
+    printf("Neste jogo o jogador tem de adivinhar qual o número que foi gerado aleatoriamente\nentre 1 e 5. Por cada resposta certa recebe um ponto! \n\nBoa Sorte");
     do{
         srand (time(NULL));
         printf("Adivinha um numero de 1 a 5! - ");
