@@ -29,12 +29,24 @@ void inicializaVariaveis(){
 
 }
 
+void encerra(){
+    printf("A encerrar o arbitro...\n");
+            
+    for(int i=0; i<30; i++){
+      kill(jogador[i].pidP, SIGINT);
+    }
+    
+    unlink(FIFO_SRV);
+
+    exit(0);
+}
+
 
 void main(int argc, char *argv[]) {
    PEDIDO p;
    int option;
    int fd, fdr, bytes;
-   char fifo[40];
+   char fifo[40], strtmp[40], str[3][40];
    
    //criar named pipe do servidor
     if(access(FIFO_SRV, F_OK) != 0){ //caso o fifo/servidor ainda nao exista
@@ -78,15 +90,42 @@ void main(int argc, char *argv[]) {
    printf("Abri o FIFO\n");
    
    do{
-       bytes = read(fd, &p, sizeof(PEDIDO));
-       printf("Recebi -> %s : cliente -> %d [%d bytes]", p.ordem,p.pid, bytes);
-       strcpy(p.resposta, "confirmado");
+       //bytes = read(fd, &p, sizeof(PEDIDO));
+       //printf("Recebi -> %s : cliente -> %d [%d bytes]", p.ordem,p.pid, bytes);
+       //strcpy(p.resposta, "confirmado");
        
-       sprintf(fifo, FIFO_CLI, p.pid);
-       fdr = open(FIFO_CLI, O_WRONLY);
-       bytes = write(fdr, &p, sizeof(PEDIDO));
-       close(fdr);
-       printf("Enviei... %s [%d bytes]\n", p.resposta, bytes);
+       //sprintf(fifo, FIFO_CLI, p.pid);
+       //fdr = open(FIFO_CLI, O_WRONLY);
+       //bytes = write(fdr, &p, sizeof(PEDIDO));
+       //close(fdr);
+       //printf("Enviei... %s [%d bytes]\n", p.resposta, bytes);
+       
+       
+       printf("\nComando: ");
+
+       scanf("%s",&strtmp);
+
+    	if (strncmp(strtmp,"k",1) == 0){
+    		memcpy(str, strtmp+1,sizeof(strtmp));
+        	for(int i=0; i<30; i++){
+                if(strcmp(str, jogador[i].username)==0){
+                    kill(jogador[i].pidP, SIGUSR1);
+                }
+            }
+        }
+    	else if (strcmp(strtmp,"players") == 0){
+        	for(int i=0; i<30; i++)
+                {
+                if(strlen(jogador[i].username)>0)
+                    printf("%s %d\n", jogador[i].username, jogador[i].pidP);
+                }
+        }
+        else if (strcmp(strtmp,"games") == 0){
+        	// lista jogo
+        }
+        else if (strcmp(strtmp,"exit") == 0){
+        	encerra();
+        }
                
        
    }while(1);

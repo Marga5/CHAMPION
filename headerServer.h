@@ -21,6 +21,6 @@ typedef struct {
 
 
 Jogos jogo;
-Jogadores jogador;
+Jogadores jogador[30];
 Campeonatos campeonato;
 
