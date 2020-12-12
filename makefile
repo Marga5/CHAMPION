@@ -1,19 +1,18 @@
-all: arbitro cliente jogos header
+all: arbitro cliente jogo1 header
 
 arbitro:
-	gcc arbitro.c jogo1.c -o arbitro
+	gcc arbitro.c jogo1.c -o arbitro -lpthread
 
 cliente:
-	gcc cliente.c -o cliente
+	gcc cliente.c -o cliente -lpthread
 
 header:
 	gcc headerServer.h -o headerServer
 	gcc header.h -o header
 
-jogos:
-	gcc jogo1.c arbitro.c -o jogo1
-	gcc jogo2.c -o jogo2
+jogo1:
+	gcc jogo1.c arbitro.c -o jogo1 -lpthread
 
 
 clean:
-	rm -rf arbitro cliente jogo1 headerServer header jogo2
+	rm -rf arbitro cliente jogo1 headerServer header

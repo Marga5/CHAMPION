@@ -1,13 +1,14 @@
 #include "headerServer.h"
 #include "header.h"
 #include <string.h>
+#include <pthread.h>
 
 
 //Leitura de Variaveis de ambiente
 //export MAXPLAYER="..."
 //export GAMEDIR="..."
 
-void leComandosCliente(){
+void * ThreadComandosCliente(void * arg){
 
   PEDIDO p;
   int fd,fdr, bytes;
@@ -52,6 +53,9 @@ void leComandosCliente(){
          }      
   
   }while(1);
+  
+  close(fd);
+  unlink(FIFO_SRV);
 }
 void inicializaVariaveis(){
 
@@ -94,6 +98,7 @@ void main(int argc, char *argv[]) {
    int option;
    int fd, fdr, bytes;
    char fifo[40], strtmp[40], str[3][40];
+   pthread_t tComandos;
    
    //criar named pipe do servidor
     if(access(FIFO_SRV, F_OK) != 0){ //caso o fifo/servidor ainda nao exista
@@ -132,7 +137,8 @@ void main(int argc, char *argv[]) {
    }
    
    
-   leComandosCliente();
+   //Thread para enviar campo
+    pthread_create(&tComandos, NULL, &ThreadComandosCliente, NULL);
    
    do{
    	printf("\nComando: ");
@@ -162,9 +168,6 @@ void main(int argc, char *argv[]) {
         }
         
    }while(1);
-   
-   close(fd);
-   unlink(FIFO_SRV);
    
    exit(5);
    
