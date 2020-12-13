@@ -4,7 +4,7 @@
 void Sinal(int sig){
 
 	if( sig == SIGUSR1){
-		// unlink do fifo do jogo
+		printf("Foste Kickado do jogo.\n");
 	}
 	
 	if( sig == SIGINT){

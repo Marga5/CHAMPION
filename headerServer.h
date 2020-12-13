@@ -8,7 +8,8 @@ typedef struct  {
 typedef struct {
 	int pidJ;           //ID do Jogo
         char nomeJogo[50];  //Nome do jogo
-	char gameDir[100];  //Directorio do jogo
+	char gameDir[100];  //Directoria do jogo
+	int nJogo;          // nº do jogo para sortear
         
 }Jogos;
 
@@ -20,7 +21,7 @@ typedef struct {
 }Jogadores;
 
 
-Jogos jogo;
+Jogos jogo[30];
 Jogadores jogador[30];
 Campeonatos campeonato;
 

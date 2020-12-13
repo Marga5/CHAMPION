@@ -7,7 +7,12 @@
 //Leitura de Variaveis de ambiente
 //export MAXPLAYER="..."
 //export GAMEDIR="..."
+
 int nJ;
+char directory;
+char Mplayers;
+
+
 void * ThreadComandosCliente(void * arg){
 
   PEDIDO p;
@@ -22,7 +27,7 @@ void * ThreadComandosCliente(void * arg){
        bytes = read(fd, &p, sizeof(PEDIDO));
        
        //COMANDO #GAME
-       if(strcmp(p.ordem,"#game") == 0){
+       if(strcmp(p.ordem,"#mygame") == 0){
          printf("Recebi comando -> %s : cliente -> %d [%d bytes]\n", p.ordem,p.pid, bytes);
          strcpy(p.resposta, "Comando enviado com sucesso");
        
@@ -101,14 +106,43 @@ void * ThreadComandosCliente(void * arg){
   close(fd);
   unlink(FIFO_SRV);
 }
-void inicializaVariaveis(){
 
-    char * directory;
-    char * Mplayers;
+void * ThreadAtribuirJogo(void * arg){
+
+	int continua = 1;
+	srand(time(NULL));
+	do{
+	if(nJ >= 2){
+		printf("Jogos serão atribuidos em 15 seg\n");
+		sleep(5); // irá mudar para tempo_espera
+		for(int i = 0; i < nJ ; i++){
+			jogo[i].nJogo = (rand() % 2)+1;
+			jogo[i].pidJ = jogador[i].pidP;
+			
+			if(jogo[i].nJogo == 1){
+				strcpy(jogo[i].nomeJogo,"JOGO DE ADIVINHAR O NUMERO");
+			}
+			else if(jogo[i].nJogo == 2){
+				strcpy(jogo[i].nomeJogo,"JOGO DE ACERTAR A CONTA");
+			}
+				
+			printf("Jogo %s atribuido ao jogador: %s\n", jogo[i].nomeJogo, jogador[i].username);
+			fflush(stdout);
+			
+		}
+		continua = 0;
+	}
+	}while(continua);
+	
+}
+
+void inicializaVariaveis(){
 
     directory = getenv("GAMEDIR");
     if(directory != NULL)
-        strcpy(jogo.gameDir, directory);
+    for (int i =0 ; i < 30 ; i++){
+          strcpy(jogo[i].gameDir, directory);
+        }
     Mplayers = getenv("MAXPLAYER");
     if(Mplayers != NULL)
         campeonato.maxplayers = atoi(Mplayers);
@@ -118,7 +152,7 @@ void inicializaVariaveis(){
         campeonato.maxplayers = 20;
     }
 
-    printf("Directoria: %s\n", jogo.gameDir);
+    printf("Directoria: %s\n", jogo[0].gameDir);
     printf("MaxPlayers: %d\n", campeonato.maxplayers);
     
 
@@ -143,7 +177,7 @@ void main(int argc, char *argv[]) {
    int option;
    int fd, fdr, bytes;
    char fifo[40], strtmp[40], str[3][40];
-   pthread_t tComandos;
+   pthread_t tComandos, tAtribuir;
    
    //criar named pipe do servidor
     if(access(FIFO_SRV, F_OK) != 0){ //caso o fifo/servidor ainda nao exista
@@ -182,9 +216,14 @@ void main(int argc, char *argv[]) {
    }
    
    
-   //Thread para enviar campo
-    pthread_create(&tComandos, NULL, &ThreadComandosCliente, NULL);
    
+   //Thread para receber comandos
+    pthread_create(&tComandos, NULL, ThreadComandosCliente, NULL);
+    
+    //Thread para esperar os jogadores e atribuir jogos
+    pthread_create(&tAtribuir, NULL, ThreadAtribuirJogo, NULL);
+    
+    
    do{
    	printf("\nComando: ");
         fflush(stdout);
@@ -195,6 +234,7 @@ void main(int argc, char *argv[]) {
         	for(int i=0; i<30; i++){
                 if(strcmp(str, jogador[i].username)==0){
                     kill(jogador[i].pidP, SIGUSR1);
+                    printf("Kick: %s", str);
                 }
             }
         }
