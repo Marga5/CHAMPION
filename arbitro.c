@@ -19,6 +19,8 @@ void * ThreadComandosCliente(void * arg){
 
   do {
        bytes = read(fd, &p, sizeof(PEDIDO));
+       
+       //COMANDO #GAME
        if(strcmp(p.ordem,"#game") == 0){
          printf("Recebi comando -> %s : cliente -> %d [%d bytes]", p.ordem,p.pid, bytes);
          strcpy(p.resposta, "Comando enviado com sucesso");
@@ -30,6 +32,7 @@ void * ThreadComandosCliente(void * arg){
          printf("Enviei... %s [%d bytes]\n", p.resposta, bytes);
          // print da informação do jogo atribuido
          
+         //COMANDO #QUIT
        }else if(strcmp(p.ordem,"#quit") == 0){
          printf("Recebi comando -> %s : cliente -> %d [%d bytes]", p.ordem,p.pid, bytes);
          strcpy(p.resposta, "Comando enviado com sucesso");
@@ -41,6 +44,8 @@ void * ThreadComandosCliente(void * arg){
          printf("Enviei... %s [%d bytes]\n", p.resposta, bytes);
          // sai do jogo , possivelmente dando unlink do fifo ao qual está conectado
        }
+       
+       //COMANDO DESCONHECIDO
        else{
          printf("Recebi -> %s : cliente -> %d [%d bytes]", p.ordem,p.pid, bytes);
          strcpy(p.resposta, "Comando desconhecido");
@@ -105,7 +110,7 @@ void main(int argc, char *argv[]) {
     if(access(FIFO_SRV, F_OK) != 0){ //caso o fifo/servidor ainda nao exista
         mkfifo(FIFO_SRV, 0600);
     }
-   printf("SERVIDOR LANCADO!!!\n FIFO CRIADO\n");
+   printf("SERVIDOR LANCADO!!!\nFIFO CRIADO\n");
    
    
    inicializaVariaveis();
