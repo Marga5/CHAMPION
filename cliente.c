@@ -1,6 +1,22 @@
 #include "headerCliente.h"
 #include "header.h"
 
+void Sinal(int sig){
+
+	if( sig == SIGUSR1){
+		// unlink do fifo do jogo
+	}
+	
+	if( sig == SIGINT){
+		printf("Conexão ao arbitro irá encerrar!\n");
+		sleep(3);
+		char fifoClienteTmp[40];
+		sprintf(fifoClienteTmp , FIFO_CLI, getpid());
+		unlink(fifoClienteTmp);
+		exit(0);
+	}
+
+}
 
 void main() {   
     PEDIDO p;
@@ -8,6 +24,9 @@ void main() {
     char str[40], fifo[40];
     int fd, fdr, num;
     int bytes;
+    
+    signal(SIGUSR1, Sinal);
+    signal(SIGINT, Sinal);
 
     if(access(FIFO_SRV, F_OK) != 0){ //caso o fifo/servidor ainda nao exista
         fprintf(stderr, "[ERRO] O servidor nao esta a funcionar\n");

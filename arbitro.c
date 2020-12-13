@@ -88,7 +88,8 @@ void encerra(){
     }
     
     unlink(FIFO_SRV);
-
+    
+    sleep(5);
     exit(0);
 }
 
@@ -161,7 +162,7 @@ void main(int argc, char *argv[]) {
                 }
         }
         else if (strcmp(strtmp,"games") == 0){
-        	// lista jogo
+        	// listar os jogos disponiveis
         }
         else if (strcmp(strtmp,"exit") == 0){
         	encerra();
