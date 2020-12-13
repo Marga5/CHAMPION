@@ -18,6 +18,7 @@ typedef struct{
     char ordem[20];
     char resposta[20];
     int pid;
+    char user[50];
 }PEDIDO;
 
 void Jogo1();

@@ -33,12 +33,7 @@ void main() {
         exit(5);
     }
 
-    printf("Insira o Username: ");
-    scanf("%s", username);
-
-    printf("[%s|%d]] Eu sou o Cliente!\n", username, getpid());
-    
-    p.pid = getpid();
+        
     sprintf(fifo, FIFO_CLI, p.pid);
     
     mkfifo(fifo,0600);  /* FIFO_CLI --> fifo  */
@@ -46,6 +41,25 @@ void main() {
     
     fd = open(FIFO_SRV, O_WRONLY);
     printf("Abri o FIFO do servidor...\n");
+    
+    printf("Insira o Username: ");
+    fflush(stdout);
+    scanf("%s", username);
+    strcpy(p.ordem, "login");
+    p.pid = getpid();
+    strcpy(p.user, username);
+    bytes = write(fd, &p, sizeof(PEDIDO));
+    
+    fdr = open(FIFO_CLI, O_RDONLY);
+    bytes=read(fdr, &p, sizeof(PEDIDO));
+    close(fdr);
+    printf("Recebi [%s] - [%d bytes]\n", p.resposta, bytes);
+    if(strcmp(p.resposta, "ERRO")==0){
+        printf("Nome de utilizador já existe\n");
+        exit(0);
+    }
+
+    printf("[%s|%d]] Eu sou o Cliente!\n", username, getpid());
     
     do{
         //Pede ordens ao cliente

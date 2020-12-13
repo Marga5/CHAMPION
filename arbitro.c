@@ -7,12 +7,13 @@
 //Leitura de Variaveis de ambiente
 //export MAXPLAYER="..."
 //export GAMEDIR="..."
-
+int nJ;
 void * ThreadComandosCliente(void * arg){
 
   PEDIDO p;
   int fd,fdr, bytes;
   char fifo[40];
+  int i, flag=0;
 
   fd = open(FIFO_SRV, O_RDWR); // -1 = ERRO
   printf("Abri o FIFO\n");
@@ -22,7 +23,7 @@ void * ThreadComandosCliente(void * arg){
        
        //COMANDO #GAME
        if(strcmp(p.ordem,"#game") == 0){
-         printf("Recebi comando -> %s : cliente -> %d [%d bytes]", p.ordem,p.pid, bytes);
+         printf("Recebi comando -> %s : cliente -> %d [%d bytes]\n", p.ordem,p.pid, bytes);
          strcpy(p.resposta, "Comando enviado com sucesso");
        
          sprintf(fifo, FIFO_CLI, p.pid);
@@ -34,7 +35,7 @@ void * ThreadComandosCliente(void * arg){
          
          //COMANDO #QUIT
        }else if(strcmp(p.ordem,"#quit") == 0){
-         printf("Recebi comando -> %s : cliente -> %d [%d bytes]", p.ordem,p.pid, bytes);
+         printf("Recebi comando -> %s : cliente -> %d [%d bytes]\n", p.ordem,p.pid, bytes);
          strcpy(p.resposta, "Comando enviado com sucesso");
        
          sprintf(fifo, FIFO_CLI, p.pid);
@@ -44,10 +45,48 @@ void * ThreadComandosCliente(void * arg){
          printf("Enviei... %s [%d bytes]\n", p.resposta, bytes);
          // sai do jogo , possivelmente dando unlink do fifo ao qual está conectado
        }
+       //COMANDO LOGIN
+       else if(strcmp(p.ordem,"login") == 0) {
+         printf("Recebi comando -> %s : cliente -> %d [%d bytes]\n", p.ordem,p.pid, bytes);
+         printf("n jogadores = %d\n", nJ);
+         if(nJ != 0){
+            for(i=0;i<nJ;i++){
+                if(strcmp(jogador[i].username, p.user)==0){
+                    printf("%s = %s", jogador[i].username, p.user);
+                    strcpy(p.resposta, "ERRO");
+                    printf("\n1 flag = %d\n\n", flag);
+                    flag=1;
+                    break;
+                }
+               
+            }
+         }
+
+        if(flag != 1) {
+            strcpy(p.resposta, "Sucesso no Login!");
+            printf("\n2 flag = %d\n\n", flag);
+            jogador[nJ].pidP = p.pid;
+            strcpy(jogador[nJ].username,p.user);
+            jogador[nJ].pontuacao = 0;
+            jogador[nJ].inGame=0;        
+            nJ++;
+        }
+         
+         printf("flag = %d, nJ= %d\n", flag, nJ);
+         sprintf(fifo, FIFO_CLI, p.pid);
+         fdr = open(FIFO_CLI, O_WRONLY);
+         bytes = write(fdr, &p, sizeof(PEDIDO));
+         close(fdr);
+         printf("Enviei... %s [%d bytes]\n", p.resposta, bytes);
+         flag=0;
+         // sai do jogo , possivelmente dando unlink do fifo ao qual está conectado
+       }
+       
+       
        
        //COMANDO DESCONHECIDO
        else{
-         printf("Recebi -> %s : cliente -> %d [%d bytes]", p.ordem,p.pid, bytes);
+         printf("Recebi -> %s : cliente -> %d [%d bytes]\n", p.ordem,p.pid, bytes);
          strcpy(p.resposta, "Comando desconhecido");
        
          sprintf(fifo, FIFO_CLI, p.pid);
@@ -148,8 +187,8 @@ void main(int argc, char *argv[]) {
    
    do{
    	printf("\nComando: ");
-
-       scanf("%s",&strtmp);
+        fflush(stdout);
+        scanf("%s",&strtmp);
 
     	if (strncmp(strtmp,"k",1) == 0){
     		memcpy(str, strtmp+1,sizeof(strtmp));
