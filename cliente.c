@@ -20,9 +20,10 @@ void Sinal(int sig){
 
 void main() {   
     PEDIDO p;
+    
     char username[25];
     char str[40], fifo[40];
-    int fd, fdr, num;
+    int fd, fdr, num ;
     int bytes;
     
     signal(SIGUSR1, Sinal);
@@ -59,7 +60,7 @@ void main() {
         exit(0);
     }
 
-    printf("[%s|%d]] Eu sou o Cliente!\n", username, getpid());
+    printf("[%s|%d] Eu sou o Cliente!\n", username, getpid());
     
     do{
         //Pede ordens ao cliente
@@ -74,6 +75,9 @@ void main() {
         bytes = read(fdr, &p,sizeof(PEDIDO));
         close(fdr);
         printf("Recebi %s [%d bytes]\n", p.resposta, bytes);
+        
+                
+       
     }while(strcmp(p.ordem, "sair"));
         
     close(fd);

@@ -12,6 +12,36 @@ int nJ;
 char directory;
 char Mplayers;
 
+void * ThreadAtribuirJogo(){
+    PEDIDO p;
+    int continua = 1;
+    char fifo[40];
+    int fd,fdr, bytes;
+    srand(time(NULL));
+    do{
+    if(nJ >= 2){
+            printf("Jogos serão atribuidos em 15 seg\n");
+            sleep(5); // irá mudar para tempo_espera
+            for(int i = 0; i < nJ ; i++){
+                    jogo[i].nJogo = (rand() % 2)+1;
+                    jogo[i].pidJ = i;
+                    jogador[i].pidJogoAtribuido = i;
+
+                    if(jogo[i].nJogo == 1){
+                            strcpy(jogo[i].nomeJogo,"JOGO DE ADIVINHAR O NUMERO");
+                    }
+                    else if(jogo[i].nJogo == 2){
+                            strcpy(jogo[i].nomeJogo,"JOGO DE ACERTAR A CONTA");
+                    }
+
+                    printf("Jogo %s atribuido ao jogador: %s\n", jogo[i].nomeJogo, jogador[i].username);
+                    fflush(stdout);
+
+            }
+            continua = 0;
+        }
+    }while(continua);
+}
 
 void * ThreadComandosCliente(void * arg){
 
@@ -19,6 +49,7 @@ void * ThreadComandosCliente(void * arg){
   int fd,fdr, bytes;
   char fifo[40];
   int i, flag=0;
+  pthread_t tAtribuir;
 
   fd = open(FIFO_SRV, O_RDWR); // -1 = ERRO
   printf("Abri o FIFO\n");
@@ -29,7 +60,7 @@ void * ThreadComandosCliente(void * arg){
        //COMANDO #GAME
        if(strcmp(p.ordem,"#mygame") == 0){
          printf("Recebi comando -> %s : cliente -> %d [%d bytes]\n", p.ordem,p.pid, bytes);
-         strcpy(p.resposta, "Comando enviado com sucesso");
+         strcpy(p.resposta, "Comando enviado com sucesso.");
        
          sprintf(fifo, FIFO_CLI, p.pid);
          fdr = open(FIFO_CLI, O_WRONLY);
@@ -37,6 +68,7 @@ void * ThreadComandosCliente(void * arg){
          close(fdr);
          printf("Enviei... %s [%d bytes]\n", p.resposta, bytes);
          // print da informação do jogo atribuido
+         
          
          //COMANDO #QUIT
        }else if(strcmp(p.ordem,"#quit") == 0){
@@ -50,16 +82,15 @@ void * ThreadComandosCliente(void * arg){
          printf("Enviei... %s [%d bytes]\n", p.resposta, bytes);
          // sai do jogo , possivelmente dando unlink do fifo ao qual está conectado
        }
+       
        //COMANDO LOGIN
        else if(strcmp(p.ordem,"login") == 0) {
          printf("Recebi comando -> %s : cliente -> %d [%d bytes]\n", p.ordem,p.pid, bytes);
-         printf("n jogadores = %d\n", nJ);
          if(nJ != 0){
             for(i=0;i<nJ;i++){
                 if(strcmp(jogador[i].username, p.user)==0){
                     printf("%s = %s", jogador[i].username, p.user);
                     strcpy(p.resposta, "ERRO");
-                    printf("\n1 flag = %d\n\n", flag);
                     flag=1;
                     break;
                 }
@@ -69,7 +100,6 @@ void * ThreadComandosCliente(void * arg){
 
         if(flag != 1) {
             strcpy(p.resposta, "Sucesso no Login!");
-            printf("\n2 flag = %d\n\n", flag);
             jogador[nJ].pidP = p.pid;
             strcpy(jogador[nJ].username,p.user);
             jogador[nJ].pontuacao = 0;
@@ -77,7 +107,6 @@ void * ThreadComandosCliente(void * arg){
             nJ++;
         }
          
-         printf("flag = %d, nJ= %d\n", flag, nJ);
          sprintf(fifo, FIFO_CLI, p.pid);
          fdr = open(FIFO_CLI, O_WRONLY);
          bytes = write(fdr, &p, sizeof(PEDIDO));
@@ -86,8 +115,7 @@ void * ThreadComandosCliente(void * arg){
          flag=0;
          // sai do jogo , possivelmente dando unlink do fifo ao qual está conectado
        }
-       
-       
+            
        
        //COMANDO DESCONHECIDO
        else{
@@ -107,34 +135,7 @@ void * ThreadComandosCliente(void * arg){
   unlink(FIFO_SRV);
 }
 
-void * ThreadAtribuirJogo(void * arg){
 
-	int continua = 1;
-	srand(time(NULL));
-	do{
-	if(nJ >= 2){
-		printf("Jogos serão atribuidos em 15 seg\n");
-		sleep(5); // irá mudar para tempo_espera
-		for(int i = 0; i < nJ ; i++){
-			jogo[i].nJogo = (rand() % 2)+1;
-			jogo[i].pidJ = jogador[i].pidP;
-			
-			if(jogo[i].nJogo == 1){
-				strcpy(jogo[i].nomeJogo,"JOGO DE ADIVINHAR O NUMERO");
-			}
-			else if(jogo[i].nJogo == 2){
-				strcpy(jogo[i].nomeJogo,"JOGO DE ACERTAR A CONTA");
-			}
-				
-			printf("Jogo %s atribuido ao jogador: %s\n", jogo[i].nomeJogo, jogador[i].username);
-			fflush(stdout);
-			
-		}
-		continua = 0;
-	}
-	}while(continua);
-	
-}
 
 void inicializaVariaveis(){
 
@@ -222,6 +223,7 @@ void main(int argc, char *argv[]) {
     
     //Thread para esperar os jogadores e atribuir jogos
     pthread_create(&tAtribuir, NULL, ThreadAtribuirJogo, NULL);
+    
     
     
    do{

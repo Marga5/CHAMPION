@@ -21,5 +21,15 @@ typedef struct{
     char user[50];
 }PEDIDO;
 
+typedef struct {
+	int pidJ;           //ID do Jogo
+        char nomeJogo[50];  //Nome do jogo
+	char gameDir[100];  //Directoria do jogo
+	int nJogo;          // nº do jogo para sortear
+        
+}Jogos;
+
+Jogos jogo[30];
+
 void Jogo1();
 void Jogo2();
