@@ -19,11 +19,11 @@ void * ThreadAtribuirJogo(){
     int fd,fdr, bytes;
     srand(time(NULL));
     do{
-    if(nJ >= 2){
+    if(nJ >= 3){
             printf("Jogos serão atribuidos em 15 seg\n");
             sleep(5); // irá mudar para tempo_espera
             for(int i = 0; i < nJ ; i++){
-                    jogo[i].nJogo = (rand() % 2)+1;
+                    jogo[i].nJogo = (rand() % 3)+1;
                     jogo[i].pidJ = i;
                     jogador[i].pidJogoAtribuido = i;
 
@@ -32,6 +32,9 @@ void * ThreadAtribuirJogo(){
                     }
                     else if(jogo[i].nJogo == 2){
                             strcpy(jogo[i].nomeJogo,"JOGO DE ACERTAR A CONTA");
+                    }
+                    else if(jogo[i].nJogo == 3){
+                            strcpy(jogo[i].nomeJogo,"JOGO DE QUIZ");
                     }
 
                     printf("Jogo %s atribuido ao jogador: %s\n", jogo[i].nomeJogo, jogador[i].username);
@@ -244,7 +247,7 @@ void main(int argc, char *argv[]) {
         	for(int i=0; i<30; i++)
                 {
                 if(strlen(jogador[i].username)>0)
-                    printf("%s %d\n", jogador[i].username, jogador[i].pidP);
+                    printf("%s %d - Jogo: %d\n", jogador[i].username, jogador[i].pidP), jogador[i].pidJogoAtribuido;
                 }
         }
         else if (strcmp(strtmp,"games") == 0){
@@ -252,6 +255,15 @@ void main(int argc, char *argv[]) {
         }
         else if (strcmp(strtmp,"exit") == 0){
         	encerra();
+        }
+        else if (strncmp(strtmp,"s",1) == 0){
+        	//encerra comunicaçao entre arbitro e cliente em questao
+        }
+        else if (strncmp(strtmp,"r",1) == 0){
+        	//retoma comunicaçao entre arbitro e cliente em questao
+        }
+        else if (strcmp(strtmp,"end") == 0){
+        	//encerra campeonato imediatamente
         }
         
    }while(1);
