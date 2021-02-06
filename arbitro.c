@@ -25,7 +25,7 @@ void * ThreadAtribuirJogo(){
             for(int i = 0; i < nJ ; i++){
                     jogo[i].nJogo = (rand() % 3)+1;
                     jogo[i].pidJ = i;
-                    jogador[i].pidJogoAtribuido = i;
+                    jogador[i].pidJogoAtribuido = jogo[i].nJogo;
 
                     if(jogo[i].nJogo == 1){
                             strcpy(jogo[i].nomeJogo,"JOGO DE ADIVINHAR O NUMERO");
@@ -247,7 +247,7 @@ void main(int argc, char *argv[]) {
         	for(int i=0; i<30; i++)
                 {
                 if(strlen(jogador[i].username)>0)
-                    printf("%s %d - Jogo: %d\n", jogador[i].username, jogador[i].pidP), jogador[i].pidJogoAtribuido;
+                    printf("%s %d - Jogo: %d\n", jogador[i].username, jogador[i].pidP, jogador[i].pidJogoAtribuido);
                 }
         }
         else if (strcmp(strtmp,"games") == 0){
