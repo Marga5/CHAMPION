@@ -76,6 +76,9 @@ void main() {
         close(fdr);
         printf("Recebi %s [%d bytes]\n", p.resposta, bytes);
         
+        
+        
+        
                 
        
     }while(strcmp(p.ordem, "sair"));

@@ -16,7 +16,7 @@ int tempo_espera;
 
 typedef struct{
     char ordem[20];
-    char resposta[20];
+    char resposta[100];
     int pid;
     char user[50];
 }PEDIDO;

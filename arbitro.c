@@ -51,7 +51,7 @@ void * ThreadComandosCliente(void * arg){
   PEDIDO p;
   int fd,fdr, bytes;
   char fifo[40];
-  int i, flag=0;
+  int i, j, flag=0;
   pthread_t tAtribuir;
 
   fd = open(FIFO_SRV, O_RDWR); // -1 = ERRO
@@ -63,8 +63,19 @@ void * ThreadComandosCliente(void * arg){
        //COMANDO #GAME
        if(strcmp(p.ordem,"#mygame") == 0){
          printf("Recebi comando -> %s : cliente -> %d [%d bytes]\n", p.ordem,p.pid, bytes);
-         strcpy(p.resposta, "Comando enviado com sucesso.");
-       
+         
+         for(j = 0;j <nJ;j++){
+             
+             if(jogador[j].pidP == p.pid){
+                 if(jogador[j].pidJogoAtribuido == 1)
+                    strcpy(p.resposta, "Jogo: JOGO DE ADIVINHAR O NUMERO");
+                 else if(jogador[j].pidJogoAtribuido == 2)
+                    strcpy(p.resposta, "ogo: JOGO DE ACERTAR A CONTA");
+                 else if(jogador[j].pidJogoAtribuido == 3)
+                    strcpy(p.resposta, "Jogo: JOGO DE QUIZ");
+             }
+         }
+        
          sprintf(fifo, FIFO_CLI, p.pid);
          fdr = open(FIFO_CLI, O_WRONLY);
          bytes = write(fdr, &p, sizeof(PEDIDO));
