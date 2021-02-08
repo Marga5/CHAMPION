@@ -53,24 +53,31 @@ void * ThreadComandosCliente(void * arg){
   char fifo[40];
   int i, j, flag=0;
   pthread_t tAtribuir;
+  int pidJogadorpedido;
 
   fd = open(FIFO_SRV, O_RDWR); // -1 = ERRO
   printf("Abri o FIFO\n");
+  
+  int k;
+  for(k==0;k<nJ;k++){
+      if(jogador[k].pidP == p.pid)
+          pidJogadorpedido = k;
+  }
 
   do {
        bytes = read(fd, &p, sizeof(PEDIDO));
        
+       
        //COMANDO #GAME
-       if(strcmp(p.ordem,"#mygame") == 0){
+       if(strcmp(p.ordem,"#mygame") == 0 && jogador[k].comunicacao == 1){
          printf("Recebi comando -> %s : cliente -> %d [%d bytes]\n", p.ordem,p.pid, bytes);
-         
          for(j = 0;j <nJ;j++){
              
              if(jogador[j].pidP == p.pid){
                  if(jogador[j].pidJogoAtribuido == 1)
                     strcpy(p.resposta, "Jogo: JOGO DE ADIVINHAR O NUMERO");
                  else if(jogador[j].pidJogoAtribuido == 2)
-                    strcpy(p.resposta, "ogo: JOGO DE ACERTAR A CONTA");
+                    strcpy(p.resposta, "Jogo: JOGO DE ACERTAR A CONTA");
                  else if(jogador[j].pidJogoAtribuido == 3)
                     strcpy(p.resposta, "Jogo: JOGO DE QUIZ");
              }
@@ -85,7 +92,8 @@ void * ThreadComandosCliente(void * arg){
          
          
          //COMANDO #QUIT
-       }else if(strcmp(p.ordem,"#quit") == 0){
+       }else if(strcmp(p.ordem,"#quit") == 0 && jogador[k].comunicacao == 1){
+
          printf("Recebi comando -> %s : cliente -> %d [%d bytes]\n", p.ordem,p.pid, bytes);
          strcpy(p.resposta, "Comando enviado com sucesso");
        
@@ -117,7 +125,8 @@ void * ThreadComandosCliente(void * arg){
             jogador[nJ].pidP = p.pid;
             strcpy(jogador[nJ].username,p.user);
             jogador[nJ].pontuacao = 0;
-            jogador[nJ].inGame=0;        
+            jogador[nJ].inGame=0;     
+            jogador[nJ].comunicacao = 1;
             nJ++;
         }
          
@@ -190,7 +199,7 @@ void encerra(){
 void main(int argc, char *argv[]) {
    PEDIDO p;
    int option;
-   int fd, fdr, bytes;
+   int fd, fdr, bytes,i;
    char fifo[40], strtmp[40], str[3][40];
    pthread_t tComandos, tAtribuir;
    
@@ -247,7 +256,7 @@ void main(int argc, char *argv[]) {
 
     	if (strncmp(strtmp,"k",1) == 0){
     		memcpy(str, strtmp+1,sizeof(strtmp));
-        	for(int i=0; i<30; i++){
+        	for(i=0; i<nJ; i++){
                 if(strcmp(str, jogador[i].username)==0){
                     kill(jogador[i].pidP, SIGUSR1);
                     printf("Kick: %s", str);
@@ -255,7 +264,7 @@ void main(int argc, char *argv[]) {
             }
         }
     	else if (strcmp(strtmp,"players") == 0){
-        	for(int i=0; i<30; i++)
+        	for(i=0; i<nJ; i++)
                 {
                 if(strlen(jogador[i].username)>0)
                     printf("%s %d - Jogo: %d\n", jogador[i].username, jogador[i].pidP, jogador[i].pidJogoAtribuido);
@@ -268,10 +277,24 @@ void main(int argc, char *argv[]) {
         	encerra();
         }
         else if (strncmp(strtmp,"s",1) == 0){
-        	//encerra comunicaçao entre arbitro e cliente em questao
+            //encerra comunicaçao entre arbitro e cliente em questao
+            memcpy(str, strtmp+1,sizeof(strtmp));
+            for(i=0; i<nJ; i++){
+                if(strcmp(str, jogador[i].username)==0){
+                    jogador[i].comunicacao=0;
+                    printf("Jogador silenciado: %s", str);
+                }
+            }
         }
         else if (strncmp(strtmp,"r",1) == 0){
-        	//retoma comunicaçao entre arbitro e cliente em questao
+            //retoma comunicaçao entre arbitro e cliente em questao
+            memcpy(str, strtmp+1,sizeof(strtmp));
+            for(i=0; i<nJ; i++){
+                if(strcmp(str, jogador[i].username)==0){
+                    jogador[i].comunicacao=1;
+                    printf("Comunicacao reposta: %s", str);
+                }
+            }
         }
         else if (strcmp(strtmp,"end") == 0){
         	//encerra campeonato imediatamente

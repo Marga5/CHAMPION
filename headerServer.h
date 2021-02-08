@@ -12,6 +12,7 @@ typedef struct {
 	int pontuacao;      //pontuação do jogador obtida no ultimo torneio
         int pidJogoAtribuido; //Id do jogo atribuido
         int inGame;         //variavel de controlo [0 - não está em nenhum jogo | 1 - já tem jogo atribuido]
+        int comunicacao;    //0 - false, 1- true
 }Jogadores;
 
 
