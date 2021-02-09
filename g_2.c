@@ -1,6 +1,6 @@
 #include "header.h"
 
-void main(){
+void Jogo2(){
     int num1, num2, resultado, resposta, pontuacao=0;
     time_t diff;
     time_t start = time(NULL);

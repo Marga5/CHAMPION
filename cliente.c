@@ -3,6 +3,12 @@
 
 void Sinal(int sig){
 
+	PEDIDO p;
+
+	char fifo[40];
+    	int fd, fdr;
+    	int bytes;
+
 	if( sig == SIGUSR1){
 		printf("Foste Kickado do jogo.\n");
 	}
@@ -14,6 +20,24 @@ void Sinal(int sig){
 		sprintf(fifoClienteTmp , FIFO_CLI, getpid());
 		unlink(fifoClienteTmp);
 		exit(0);
+	}
+	
+	if ( sig == SIGUSR2){
+	
+		p.pid = getpid();
+    		sprintf(fifo, FIFO_CLI, p.pid);
+    
+    		mkfifo(fifo,0600);  /* FIFO_CLI --> fifo  */
+    		
+		fd = open(FIFO_SRV, O_WRONLY);
+		strcpy(p.ordem, "#mygame");
+		bytes = write(fd, &p, sizeof(PEDIDO));
+        
+        	fdr = open(FIFO_CLI, O_RDONLY);
+       	 bytes = read(fdr, &p,sizeof(PEDIDO));
+        	close(fdr);
+        	printf("Recebi %s [%d bytes]\n", p.resposta, bytes);
+	
 	}
 
 }
@@ -28,6 +52,7 @@ void main() {
     
     signal(SIGUSR1, Sinal);
     signal(SIGINT, Sinal);
+    signal(SIGUSR2, Sinal);
 
     if(access(FIFO_SRV, F_OK) != 0){ //caso o fifo/servidor ainda nao exista
         fprintf(stderr, "[ERRO] O servidor nao esta a funcionar\n");

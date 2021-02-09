@@ -19,7 +19,7 @@ void * ThreadAtribuirJogo(){
     int fd,fdr, bytes;
     srand(time(NULL));
     do{
-    if(nJ >= 3){
+    if(nJ >= 2){
             printf("Jogos serão atribuidos em 15 seg\n");
             sleep(5); // irá mudar para tempo_espera
             for(int i = 0; i < nJ ; i++){
@@ -39,6 +39,8 @@ void * ThreadAtribuirJogo(){
 
                     printf("Jogo %s atribuido ao jogador: %s\n", jogo[i].nomeJogo, jogador[i].username);
                     fflush(stdout);
+                    
+                    kill(jogador[i].pidP, SIGUSR2);
 
             }
             continua = 0;
@@ -75,11 +77,11 @@ void * ThreadComandosCliente(void * arg){
              
              if(jogador[j].pidP == p.pid){
                  if(jogador[j].pidJogoAtribuido == 1)
-                    strcpy(p.resposta, "Jogo: JOGO DE ADIVINHAR O NUMERO");
+                    strcpy(p.resposta, "JOGO DE ADIVINHAR O NUMERO");
                  else if(jogador[j].pidJogoAtribuido == 2)
-                    strcpy(p.resposta, "Jogo: JOGO DE ACERTAR A CONTA");
+                    strcpy(p.resposta, "JOGO DE ACERTAR A CONTA");
                  else if(jogador[j].pidJogoAtribuido == 3)
-                    strcpy(p.resposta, "Jogo: JOGO DE QUIZ");
+                    strcpy(p.resposta, "JOGO DE QUIZ");
              }
          }
         

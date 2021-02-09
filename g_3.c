@@ -9,7 +9,7 @@
 #define NUM_STRING 4
 #define MAX_STRING_SIZE 60
 
-void main (){
+void Jogo3(){
     time_t start = time(NULL);
     time_t diff;
     int pont=0, i=0;
