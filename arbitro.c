@@ -271,7 +271,19 @@ void main(int argc, char *argv[]) {
                 }
         }
         else if (strcmp(strtmp,"games") == 0){
-        	// listar os jogos disponiveis
+            for(i=0;i<3;i++){
+                if(i==0){
+                    printf("JOGO DE ADIVINHAR O NUMERO\n");
+                }
+                else if(i==1){
+                    printf("JOGO DE ACERTAR A CONTA\n");
+                }
+                else if(i==2){
+                    printf("JOGO DE QUIZ\n");
+                }
+                 
+            
+            }
         }
         else if (strcmp(strtmp,"exit") == 0){
         	encerra();
